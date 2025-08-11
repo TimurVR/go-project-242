@@ -1,8 +1,7 @@
-.PHONY: build test lint
+.PHONY: build test lint run
 
 build:
-	go build -o bin/hexlet-path-size .
-	chmod +x bin/hexlet-path-size
+	go build -o bin\hexlet-path-size   
 
 test:
 	go test -v ./...
@@ -10,5 +9,5 @@ test:
 lint:
 	golangci-lint run
 
-run:
-	./bin/hexlet-path-size
+run: build
+	bin\hexlet-path-size  
