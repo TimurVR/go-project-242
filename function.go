@@ -40,7 +40,10 @@ func GetPathSize(path string, recursive, human, all bool) (string, error) {
 				if err != nil {
 					return "", err
 				}
-				totalSize += fileInfo1.Size()
+				if fileInfo1.Mode().IsRegular(){
+						totalSize += fileInfo1.Size()
+				}
+				
 			}
 		}
 	}
