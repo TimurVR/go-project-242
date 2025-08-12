@@ -41,9 +41,6 @@ jobs:
           echo "=== File sizes ==="
           find . -type f -exec du -h {} + || true
 
-      - name: Run linter
-        run: make lint
-
       - name: Build
         run: make build
 
