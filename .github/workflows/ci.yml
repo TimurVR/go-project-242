@@ -43,6 +43,3 @@ jobs:
 
       - name: Build
         run: make build
-
-      - name: Generate coverage
-        run: make coverage
