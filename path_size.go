@@ -9,7 +9,7 @@ import (
     "github.com/urfave/cli/v3"
 )
 
-func main() {
+func _() {
     cmd := &cli.Command{
         Name:  "help",
         Usage: "make an explosive entrance",
