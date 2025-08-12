@@ -69,3 +69,7 @@ func TestGetPathSizeNotHumanDirAll(t *testing.T) {
     }
     require.Equal(t, "19689B\texample", ex1, "Expected format: size\\tfilename")
 }
+
+func main(){
+	
+}

@@ -15,64 +15,24 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: "1.23.3"
-          cache: true  
+          go-version: "1.21"
 
-      - name: Install dependencies
-        run: |
-          # Устанавливаем golangci-lint
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.57.2
-          
-          # Устанавливаем tree для отладки
-          sudo apt-get update && sudo apt-get install -y tree
-
-      - name: Debug testdata structure
-        run: |
-          echo "=== Testdata Structure ==="
-          tree -ah --du testdata
-          echo "=== File Sizes ==="
-          find testdata -type f -exec du -ah {} \;
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
 
       - name: Run tests
         run: |
-          # Чистим кэш тестов
-          go clean -testcache
-          
-          # Запускаем тесты с подробным выводом
-          go test -v ./testdata
-          test_exit=$?
-          
-          # Дополнительная диагностика при ошибке
-          if [ $test_exit -ne 0 ]; then
-            echo "=== DEBUG: Directory Contents ==="
-            find testdata -type f -exec ls -la {} \;
-          fi
-          exit $test_exit
+          make test
+          ls -la testdata/example  # Дебаг структуры папки
 
       - name: Run linter
-        run: |
-          echo "GolangCI-Lint version:"
-          golangci-lint --version
-          golangci-lint run -v
+        run: make lint
 
       - name: Build
-        run: |
-          make build
-          echo "Build successful, binary info:"
-          ./bin/hexlet-path-size --version || true
+        run: make build
 
       - name: Generate coverage
-        run: |
-          go test -coverprofile=coverage.out ./...
-          go tool cover -html=coverage.out -o coverage.html
-          
-          # Загружаем отчёт как артефакт
-          if [ -f coverage.html ]; then
-            echo "Coverage report generated"
-          fi
-
-    
-    artifacts:
-      paths:
-        - coverage.html
-        - bin/hexlet-path-size
+        run: make coverage

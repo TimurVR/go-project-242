@@ -1,4 +1,4 @@
-package goproject242
+package main
 import (
 	"fmt"
 	"os"
@@ -20,7 +20,7 @@ func GetPathSize(path string, recursive, human, all bool) (string, error) {
 			if err != nil {
 				return err
 			}
-			if d.IsDir()==false  {
+			if !d.IsDir()  {
 				info, err := d.Info()
 				if err != nil {
 					return err
