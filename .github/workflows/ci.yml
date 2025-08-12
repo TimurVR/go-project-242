@@ -23,10 +23,23 @@ jobs:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
 
+      - name: Debug directory structure
+        run: |
+          echo "=== Directory structure ==="
+          ls -laR
+          echo "=== Test data contents ==="
+          ls -la testdata/example || echo "No testdata directory"
+          echo "=== Disk usage ==="
+          du -sh * || true
+
       - name: Run tests
         run: |
+          echo "=== Running tests ==="
           make test
-          ls -la testdata/example  
+          echo "=== Test output ==="
+          ls -la testdata/example || echo "No testdata directory"
+          echo "=== File sizes ==="
+          find . -type f -exec du -h {} + || true
 
       - name: Run linter
         run: make lint
