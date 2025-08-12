@@ -18,33 +18,61 @@ jobs:
           go-version: "1.23.3"
           cache: true  
 
-      - name: Install golangci-lint
+      - name: Install dependencies
         run: |
-
+          # Устанавливаем golangci-lint
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.57.2
-          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+          
+          # Устанавливаем tree для отладки
+          sudo apt-get update && sudo apt-get install -y tree
 
-      - name: Run tests with debug
+      - name: Debug testdata structure
         run: |
-          echo "=== File structure ==="
-          ls -laR testdata/
-          echo "=== Running tests ==="
-          make test
+          echo "=== Testdata Structure ==="
+          tree -ah --du testdata
+          echo "=== File Sizes ==="
+          find testdata -type f -exec du -ah {} \;
+
+      - name: Run tests
+        run: |
+          # Чистим кэш тестов
+          go clean -testcache
+          
+          # Запускаем тесты с подробным выводом
+          go test -v ./testdata
+          test_exit=$?
+          
+          # Дополнительная диагностика при ошибке
+          if [ $test_exit -ne 0 ]; then
+            echo "=== DEBUG: Directory Contents ==="
+            find testdata -type f -exec ls -la {} \;
+          fi
+          exit $test_exit
 
       - name: Run linter
         run: |
-          echo "=== Linter version ==="
+          echo "GolangCI-Lint version:"
           golangci-lint --version
-          make lint
+          golangci-lint run -v
 
-      - name: Build and verify
+      - name: Build
         run: |
           make build
+          echo "Build successful, binary info:"
           ./bin/hexlet-path-size --version || true
 
       - name: Generate coverage
         run: |
-          make coverage
+          go test -coverprofile=coverage.out ./...
+          go tool cover -html=coverage.out -o coverage.html
+          
+          # Загружаем отчёт как артефакт
           if [ -f coverage.html ]; then
             echo "Coverage report generated"
           fi
+
+    
+    artifacts:
+      paths:
+        - coverage.html
+        - bin/hexlet-path-size
