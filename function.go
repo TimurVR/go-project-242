@@ -1,4 +1,4 @@
-package main
+package goproject242
 import (
 	"fmt"
 	"os"
