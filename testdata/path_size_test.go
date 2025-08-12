@@ -37,7 +37,7 @@ func TestGetPathSizeNotHumanDocx(t *testing.T) {
     }
     require.Equal(t, "16902B\texample.docx", ex1, "Expected format: size\\tfilename")
 }
-/* тут в локальном плане всё считает правильно, но когда на гитхабе есть проблемы, не знаю как решить)
+
 func TestGetPathSizeHumanDirOnlyFiles(t *testing.T) {//r
     ex1, err1 := code1.GetPathSize("example", true, true, false)
     if err1 != nil {
@@ -53,7 +53,7 @@ func TestGetPathSizeNotHumanDirOnlyFiles(t *testing.T) {//red
     }
     require.Equal(t, "19131B\texample", ex1, "Expected format: size\\tfilename")
 }
-*/
+
 func TestGetPathSizeHumanDirAll(t *testing.T) {
     ex1, err1 := code1.GetPathSize("example", true, true, true)
     if err1 != nil {

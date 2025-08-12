@@ -39,17 +39,16 @@ func GetPathSize(path string, recursive, human, all bool) (string, error) {
 				if strings.HasPrefix(entry.Name(), ".") {
 					continue
 				}
-				path1 := filepath.Join(path, entry.Name())
-				fileInfo1, err := os.Lstat(path1)
-				if err != nil {
-					return "", err
+				if entry.Type().IsRegular() {
+					info, err := entry.Info()
+					if err != nil {
+						continue 
+					}
+					totalSize += info.Size() 
 				}
-				if fileInfo1.Mode().IsRegular() {
-					totalSize += fileInfo1.Size()
-				}
-			}
-		}
+					}
 	}
+}
 	if human {
 		return fmt.Sprintf("%s\t%s", formatHumanReadable(totalSize), path), err
 	}
