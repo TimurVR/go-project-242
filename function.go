@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"io/fs"
+	"strings"
 )
 func GetPathSize(path string, recursive, human, all bool) (string, error) {
 	fileInfo, err := os.Lstat(path)
@@ -31,19 +32,21 @@ func GetPathSize(path string, recursive, human, all bool) (string, error) {
 		})
 		}else{
 			entries, err := os.ReadDir(path)
-			if err!=nil{
-				return "",err
+			if err != nil {
+				return "", err
 			}
 			for _, entry := range entries {
+				if strings.HasPrefix(entry.Name(), ".") {
+					continue
+				}
 				path1 := filepath.Join(path, entry.Name())
 				fileInfo1, err := os.Lstat(path1)
 				if err != nil {
 					return "", err
 				}
-				if fileInfo1.Mode().IsRegular(){
-						totalSize += fileInfo1.Size()
+				if fileInfo1.Mode().IsRegular() {
+					totalSize += fileInfo1.Size()
 				}
-				
 			}
 		}
 	}
