@@ -31,6 +31,12 @@ func Main() {
 				Usage:   "include hidden files and directories",
 				Value:   false,
 			},
+			&cli.BoolFlag{
+				Name:    "recursive",
+				Aliases: []string{"r"},				
+				Usage:   "recursive size of directories",
+				Value:   false,
+			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			if cmd.Bool("help") {
@@ -45,7 +51,8 @@ func Main() {
 			path := cmd.Args().First()
 			humanReadable := cmd.Bool("human")
 			allReadable := cmd.Bool("all")
-			size, err := GetPathSize(path, true, humanReadable, allReadable)
+			recursionReadable := cmd.Bool("recursive")
+			size, err := GetPathSize(path, recursionReadable, humanReadable, allReadable)
 			if err != nil {
 				return fmt.Errorf("error getting size: %w", err)
 			}
@@ -61,12 +68,15 @@ func Main() {
 }
 func Info(){
 	fmt.Print(`NAME:
-    hexlet-path-size - print size of a file or directory;
+   hexlet-path-size - print size of a file or directory; supports -r (recursive), -H (human-readable), -a (include hidden)
 
 USAGE:
-    hexlet-path-size [global options]
+   hexlet-path-size [global options]
 
 GLOBAL OPTIONS:
-    --help, -h  show help
+   --recursive, -r  recursive size of directories (default: false)
+   --human, -H      human-readable sizes (auto-select unit) (default: false)
+   --all, -a        include hidden files and directories (default: false)
+   --help, -h       show help
 `)
 }

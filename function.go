@@ -1,62 +1,72 @@
 package goproject242
+
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
-	"io/fs"
 	"strings"
 )
+
 func GetPathSize(path string, recursive, human, all bool) (string, error) {
 	fileInfo, err := os.Lstat(path)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to access path: %w", err)
 	}
 	var totalSize int64
-	if fileInfo.Mode().IsRegular(){
+	if fileInfo.Mode().IsRegular() {
 		totalSize = fileInfo.Size()
 	} else {
-		if all{
-		    err = filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
-			if err != nil {
-				return err
-			}
-			if !d.IsDir()  {
-				info, err := d.Info()
+		if recursive {
+			err = filepath.WalkDir(path, func(currentPath string, d fs.DirEntry, err error) error {
 				if err != nil {
 					return err
 				}
-				totalSize += info.Size()
-			}
-			
-			return nil
-		})
-		}else{
+				if !all && strings.HasPrefix(d.Name(), ".") {
+					if d.IsDir() {
+						return filepath.SkipDir
+					}
+					return nil
+				}
+
+				if !d.IsDir() {
+					info, err := d.Info()
+					if err != nil {
+						return err
+					}
+					totalSize += info.Size()
+				}
+				return nil
+			})
+		} else {
 			entries, err := os.ReadDir(path)
 			if err != nil {
-				return "", err
+				return "", fmt.Errorf("failed to read directory: %w", err)
 			}
-
 			for _, entry := range entries {
-				if strings.HasPrefix(entry.Name(), ".") {
+				if !all && strings.HasPrefix(entry.Name(), ".") {
 					continue
 				}
 				fullPath := filepath.Join(path, entry.Name())
 				fileInfo, err := os.Stat(fullPath)
 				if err != nil {
-					continue 
+					continue
 				}
+
 				if fileInfo.Mode().IsRegular() {
 					totalSize += fileInfo.Size()
 				}
 			}
 		}
-	}	
-	if human {
-		return fmt.Sprintf("%s\t%s", formatHumanReadable(totalSize), path), err
 	}
-	return fmt.Sprintf("%dB\t%s", totalSize, path), err
+	if err != nil {
+		return "", fmt.Errorf("error during size calculation: %w", err)
+	}
+	if human {
+		return fmt.Sprintf("%s\t%s", formatHumanReadable(totalSize), path), nil
+	}
+	return fmt.Sprintf("%dB\t%s", totalSize, path), nil
 }
-
 func formatHumanReadable(size int64) string {
 	const unit = 1024
 	if size < unit {

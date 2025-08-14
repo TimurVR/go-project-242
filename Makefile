@@ -3,6 +3,7 @@
 build:
 	@if not exist bin mkdir bin
 	go build -o bin/hexlet-path-size.exe cmd/hexlet-path-size/main.go
+	go build -o bin/hexlet-path-size cmd/hexlet-path-size/main.go
 
 test:
 	go test -v testdata/path_size_test.go
