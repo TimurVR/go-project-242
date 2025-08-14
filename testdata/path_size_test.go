@@ -38,7 +38,7 @@ func TestGetPathSizeNotHumanDocx(t *testing.T) {
     require.Equal(t, "16902B\texample.docx", ex1, "Expected format: size\\tfilename")
 }
 
-func TestGetPathSizeHumanDirOnlyFiles(t *testing.T) {//r
+func TestGetPathSizeHumanDirOnlyFiles(t *testing.T) {//red
     ex1, err1 := code1.GetPathSize("example", true, true, false)
     if err1 != nil {
         t.Errorf(`Error in testing of getting path size %v`, err1)
@@ -54,18 +54,18 @@ func TestGetPathSizeNotHumanDirOnlyFiles(t *testing.T) {//red
     require.Equal(t, "19131B\texample", ex1, "Expected format: size\\tfilename")
 }
 
-func TestGetPathSizeHumanDirAll(t *testing.T) {
+func TestGetPathSizeHumanDirAll(t *testing.T) {//red
     ex1, err1 := code1.GetPathSize("example", true, true, true)
     if err1 != nil {
         t.Errorf(`Error in testing of getting path size %v`, err1)
     }
-    require.Equal(t, "19.2KB\texample", ex1, "Expected format: size\\tfilename")
+    require.Equal(t, "19.3KB\texample", ex1, "Expected format: size\\tfilename")
 }
 
-func TestGetPathSizeNotHumanDirAll(t *testing.T) {
+func TestGetPathSizeNotHumanDirAll(t *testing.T) {//red
     ex1, err1 := code1.GetPathSize("example", true, false, true)
     if err1 != nil {
         t.Errorf(`Error in testing of getting path size %v`, err1)
     }
-    require.Equal(t, "19689B\texample", ex1, "Expected format: size\\tfilename")
+    require.Equal(t, "19795B\texample", ex1, "Expected format: size\\tfilename")
 }

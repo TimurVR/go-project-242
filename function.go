@@ -50,12 +50,13 @@ func GetPathSize(path string, recursive, human, all bool) (string, error) {
 				}
 			}
 		}
-	}
+	}	
 	if human {
 		return fmt.Sprintf("%s\t%s", formatHumanReadable(totalSize), path), err
 	}
 	return fmt.Sprintf("%dB\t%s", totalSize, path), err
 }
+
 func formatHumanReadable(size int64) string {
 	const unit = 1024
 	if size < unit {

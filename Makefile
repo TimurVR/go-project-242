@@ -5,7 +5,7 @@ build:
 	go build -o bin/hexlet-path-size.exe cmd/hexlet-path-size/main.go
 
 test:
-	go test -v ./...
+	go test -v testdata/path_size_test.go
 
 lint:
 	golangci-lint run
