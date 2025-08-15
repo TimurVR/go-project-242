@@ -42,4 +42,4 @@ jobs:
           find . -type f -exec du -h {} + || true
 
       - name: Build
-        run: make build
+        run: go build -v ./...
