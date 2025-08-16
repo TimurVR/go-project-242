@@ -1,82 +1,81 @@
-package goproject242
+ package code
 
 import (
-	"context"
 	"fmt"
-	"log"
+	"io/fs"
 	"os"
-
-	"github.com/urfave/cli/v3"
+	"path/filepath"
+	"strings"
 )
 
-func Main() {
-	cmd := &cli.Command{
-		Name:  "hexlet-path-size",
-		Usage: "print size of a file or directory",
-		Flags: []cli.Flag{
-			&cli.BoolFlag{
-				Name:    "human",
-				Aliases: []string{"H"},
-				Usage:   "human-readable sizes (auto-select unit)",
-				Value:   false,
-			},
-			&cli.BoolFlag{
-				Name:    "help",
-				Aliases: []string{"h"},
-				Usage:   "show help",
-			},
-			&cli.BoolFlag{
-				Name:    "all",
-				Aliases: []string{"a"},				
-				Usage:   "include hidden files and directories",
-				Value:   false,
-			},
-			&cli.BoolFlag{
-				Name:    "recursive",
-				Aliases: []string{"r"},				
-				Usage:   "recursive size of directories",
-				Value:   false,
-			},
-		},
-		Action: func(ctx context.Context, cmd *cli.Command) error {
-			if cmd.Bool("help") {
-				Info()
+func GetPathSize(path string, recursive, human, all bool) (string, error) {
+	fileInfo, err := os.Lstat(path)
+	if err != nil {
+		return "", fmt.Errorf("failed to access path: %w", err)
+	}
+	var totalSize int64
+	if fileInfo.Mode().IsRegular() {
+		totalSize = fileInfo.Size()
+	} else {
+		if recursive {
+			err = filepath.WalkDir(path, func(currentPath string, d fs.DirEntry, err error) error {
+				if err != nil {
+					return err
+				}
+				if !all && strings.HasPrefix(d.Name(), ".") {
+					if d.IsDir() {
+						return filepath.SkipDir
+					}
+					return nil
+				}
+
+				if !d.IsDir() {
+					info, err := d.Info()
+					if err != nil {
+						return err
+					}
+					totalSize += info.Size()
+				}
 				return nil
-			}
-
-			if cmd.NArg() == 0 {
-				return fmt.Errorf("path argument is required")
-			}
-
-			path := cmd.Args().First()
-			humanReadable := cmd.Bool("human")
-			allReadable := cmd.Bool("all")
-			recursionReadable := cmd.Bool("recursive")
-			size, err := GetPathSize(path, recursionReadable, humanReadable, allReadable)
+			})
+		} else {
+			entries, err := os.ReadDir(path)
 			if err != nil {
-				return fmt.Errorf("error getting size: %w", err)
+				return "", fmt.Errorf("failed to read directory: %w", err)
 			}
-			
-			fmt.Println(size)
-			return nil
-		},
-	}
+			for _, entry := range entries {
+				if !all && strings.HasPrefix(entry.Name(), ".") {
+					continue
+				}
+				fullPath := filepath.Join(path, entry.Name())
+				fileInfo, err := os.Stat(fullPath)
+				if err != nil {
+					continue
+				}
 
-	if err := cmd.Run(context.Background(), os.Args); err != nil {
-		log.Fatal(err)
+				if fileInfo.Mode().IsRegular() {
+					totalSize += fileInfo.Size()
+				}
+			}
+		}
 	}
+	if err != nil {
+		return "", fmt.Errorf("error during size calculation: %w", err)
+	}
+	if human {
+		return formatHumanReadable(totalSize), nil
+	}
+	return fmt.Sprintf("%dB", totalSize), nil
 }
-func Info(){
-	fmt.Print(`NAME:
-   hexlet-path-size - print size of a file or directory; supports -r (recursive), -H (human-readable), -a (include hidden)
-
-USAGE:
-   hexlet-path-size [global options]
-
-GLOBAL OPTIONS:
-   --recursive, -r  recursive size of directories (default: false)
-   --human, -H      human-readable sizes (auto-select unit) (default: false)
-   --all, -a        include hidden files and directories (default: false)
-   --help, -h       show help
-`)
+func formatHumanReadable(size int64) string {
+	const unit = 1024
+	if size < unit {
+		return fmt.Sprintf("%dB", size)
+	}
+	div, exp := int64(unit), 0
+	for n := size / unit; n >= unit; n /= unit {
+		div *= unit
+		exp++
+	}
+	return fmt.Sprintf("%.1f%cB", float64(size)/float64(div), "KMGTPE"[exp])
 }
