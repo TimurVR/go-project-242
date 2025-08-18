@@ -5,11 +5,17 @@ import (
 	"fmt"
 	"log"
 	"os"
-	code1 "code"
+	"code"
 	"github.com/urfave/cli/v3"
 )
 
 func main() {
+	cli.HelpFlag = &cli.BoolFlag{
+		Name:    "help",
+		Aliases: []string{"h"},
+		Usage:   "help",
+	}
+
 	cmd := &cli.Command{
 		Name:  "hexlet-path-size",
 		Usage: "print size of a file or directory",
@@ -19,11 +25,6 @@ func main() {
 				Aliases: []string{"H"},
 				Usage:   "human-readable sizes (auto-select unit)",
 				Value:   false,
-			},
-			&cli.BoolFlag{
-				Name:    "help",
-				Aliases: []string{"h"},
-				Usage:   "show help",
 			},
 			&cli.BoolFlag{
 				Name:    "all",
@@ -39,8 +40,8 @@ func main() {
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			if cmd.Bool("help") {
-				Info()
+			if cmd.Bool("help") || cmd.Bool("haaaaalp") || cmd.Bool("halp") {
+				(&cli.Command{}).Run(context.Background(), os.Args)
 				return nil
 			}
 
@@ -52,7 +53,7 @@ func main() {
 			humanReadable := cmd.Bool("human")
 			allReadable := cmd.Bool("all")
 			recursionReadable := cmd.Bool("recursive")
-			size, err := code1.GetPathSize(path, recursionReadable, humanReadable, allReadable)
+			size, err := code.GetPathSize(path, recursionReadable, humanReadable, allReadable)
 			if err != nil {
 				return fmt.Errorf("error getting size: %w", err)
 			}			
@@ -64,18 +65,4 @@ func main() {
 	if err := cmd.Run(context.Background(), os.Args); err != nil {
 		log.Fatal(err)
 	}
-}
-func Info(){
-	fmt.Print(`NAME:
-   hexlet-path-size - print size of a file or directory; supports -r (recursive), -H (human-readable), -a (include hidden)
-
-USAGE:
-   hexlet-path-size [global options]
-
-GLOBAL OPTIONS:
-   --recursive, -r  recursive size of directories (default: false)
-   --human, -H      human-readable sizes (auto-select unit) (default: false)
-   --all, -a        include hidden files and directories (default: false)
-   --help, -h       show help
-`)
 }

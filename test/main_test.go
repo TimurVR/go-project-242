@@ -1,13 +1,13 @@
-package testdata_test
+package code
 
 import (
     "testing"
-    code1 "code"
+    "code"
     "github.com/stretchr/testify/require"
 )
 // with Txt
 func TestGetPathSizeHumanTxt(t *testing.T) {
-    ex1, err1 := code1.GetPathSize("../testdata/example.txt", true, true, true)
+    ex1, err1 := code.GetPathSize("../testdata/example.txt", true, true, true)
     if err1 != nil {
         t.Errorf(`Error in testing of getting path size %v`, err1)
     }
@@ -15,7 +15,7 @@ func TestGetPathSizeHumanTxt(t *testing.T) {
 }
 
 func TestGetPathSizeNotHumanTxt(t *testing.T) {
-    ex1, err1 := code1.GetPathSize("../testdata/example.txt", true, false, true)
+    ex1, err1 := code.GetPathSize("../testdata/example.txt", true, false, true)
     if err1 != nil {
         t.Errorf(`Error in testing of getting path size %v`, err1)
     }
@@ -23,7 +23,7 @@ func TestGetPathSizeNotHumanTxt(t *testing.T) {
 }
 // with Doc
 func TestGetPathSizeHumanDocx(t *testing.T) {
-    ex1, err1 := code1.GetPathSize("../testdata/example.docx", true, true, true)
+    ex1, err1 := code.GetPathSize("../testdata/example.docx", true, true, true)
     if err1 != nil {
         t.Errorf(`Error in testing of getting path size %v`, err1)
     }
@@ -31,7 +31,7 @@ func TestGetPathSizeHumanDocx(t *testing.T) {
 }
 
 func TestGetPathSizeNotHumanDocx(t *testing.T) {
-    ex1, err1 := code1.GetPathSize("../testdata/example.docx", true, false, true)
+    ex1, err1 := code.GetPathSize("../testdata/example.docx", true, false, true)
     if err1 != nil {
         t.Errorf(`Error in testing of getting path size %v`, err1)
     }
@@ -39,7 +39,7 @@ func TestGetPathSizeNotHumanDocx(t *testing.T) {
 }
 // with Dir All==false && Recursion==false
 func TestGetPathSizeHumanDir(t *testing.T) {
-    ex1, err1 := code1.GetPathSize("../testdata/example", false, true, false)
+    ex1, err1 := code.GetPathSize("../testdata/example", false, true, false)
     if err1 != nil {
         t.Errorf(`Error in testing of getting path size %v`, err1)
     }
@@ -47,7 +47,7 @@ func TestGetPathSizeHumanDir(t *testing.T) {
 }
 
 func TestGetPathSizeNotHumanDir(t *testing.T) {
-    ex1, err1 := code1.GetPathSize("../testdata/example", false, false, false)
+    ex1, err1 := code.GetPathSize("../testdata/example", false, false, false)
     if err1 != nil {
         t.Errorf(`Error in testing of getting path size %v`, err1)
     }
@@ -55,7 +55,7 @@ func TestGetPathSizeNotHumanDir(t *testing.T) {
 }
 // with Dir All==true && Recursion==false
 func TestGetPathSizeHumanDirAll(t *testing.T) {
-    ex1, err1 := code1.GetPathSize("../testdata/example", false, true, true)
+    ex1, err1 := code.GetPathSize("../testdata/example", false, true, true)
     if err1 != nil {
         t.Errorf(`Error in testing of getting path size %v`, err1)
     }
@@ -63,7 +63,7 @@ func TestGetPathSizeHumanDirAll(t *testing.T) {
 }
 
 func TestGetPathSizeNotHumanDirAll(t *testing.T) {
-    ex1, err1 := code1.GetPathSize("../testdata/example", false, false, true)
+    ex1, err1 := code.GetPathSize("../testdata/example", false, false, true)
     if err1 != nil {
         t.Errorf(`Error in testing of getting path size %v`, err1)
     }
@@ -71,7 +71,7 @@ func TestGetPathSizeNotHumanDirAll(t *testing.T) {
 }
 // with Dir All==false && Recursion==true
 func TestGetPathSizeHumanDirRecursion(t *testing.T) {
-    ex1, err1 := code1.GetPathSize("../testdata/example", true, true, false)
+    ex1, err1 := code.GetPathSize("../testdata/example", true, true, false)
     if err1 != nil {
         t.Errorf(`Error in testing of getting path size %v`, err1)
     }
@@ -79,7 +79,7 @@ func TestGetPathSizeHumanDirRecursion(t *testing.T) {
 }
 
 func TestGetPathSizeNotHumanRecursion(t *testing.T) {
-    ex1, err1 := code1.GetPathSize("../testdata/example", true, false, false)
+    ex1, err1 := code.GetPathSize("../testdata/example", true, false, false)
     if err1 != nil {
         t.Errorf(`Error in testing of getting path size %v`, err1)
     }
@@ -87,7 +87,7 @@ func TestGetPathSizeNotHumanRecursion(t *testing.T) {
 }
 // with Dir All==true && Recursion==true
 func TestGetPathSizeHumanTrue(t *testing.T) {
-    ex1, err1 := code1.GetPathSize("../testdata/example", true, true, true)
+    ex1, err1 := code.GetPathSize("../testdata/example", true, true, true)
     if err1 != nil {
         t.Errorf(`Error in testing of getting path size %v`, err1)
     }
@@ -95,7 +95,7 @@ func TestGetPathSizeHumanTrue(t *testing.T) {
 }
 
 func TestGetPathSizeNotHumanTrue(t *testing.T) {
-    ex1, err1 := code1.GetPathSize("../testdata/example", true, false, true)
+    ex1, err1 := code.GetPathSize("../testdata/example", true, false, true)
     if err1 != nil {
         t.Errorf(`Error in testing of getting path size %v`, err1)
     }
